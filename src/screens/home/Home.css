@@ -14,7 +14,15 @@
 }
 
 .releasedMoviesOuterDiv{
+    box-sizing: border-box;
   width : 76%;
   float : left;
-  margin : 16px;
+  padding : 16px;
+}
+.filter{
+    text-align: center;
+    box-sizing: border-box;
+    width : 24%;
+    float : right;
+    padding : 16px;
 }
