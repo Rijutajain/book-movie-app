@@ -1,0 +1,20 @@
+.upcomingMovies{
+    background-color: #ff9999;
+    padding: 8px;
+    text-align: center;
+    font-size: 1rem;
+}
+.upcomingMoviesOuterDiv{
+    display: flex;
+    justify-content: space-around;
+    overflow :hidden;
+    flex-wrap: wrap;
+    
+   
+}
+
+.releasedMoviesOuterDiv{
+  width : 76%;
+  float : left;
+  margin : 16px;
+}
