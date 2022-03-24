@@ -8,18 +8,47 @@ import { FormControl } from "@material-ui/core";
 import { TextField } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator"
 import { Link, useHistory } from 'react-router-dom';
+import { ContactSupportOutlined } from "@material-ui/icons";
 
 
 
 
 function LoginPanel(props) {
+    const history = useHistory();
+    async function LoginHandler() {
+        const param = window.btoa(addLoginForm.username + ":" + addLoginForm.password);
+        console.log(param);
+        try {
+            const rawresponse = await fetch('http://localhost:8085/api/v1/auth/login',
+                {
+                    method: 'POST',
+                    headers: {
+                        "Accept": "application/json;charset=UTF-8",
+                        "authorization": "Basic "+param,
+                        
+                    }
+                })
+            if (rawresponse.ok) {
+                const response = await rawresponse.json();
+                return true;
+            }
+            else {
+                const error = new Error();
+                error.message = 'Incorrect login';
+                throw error;
+            }
+        } catch (e) {
+            alert(e.message);
+        }
+        return false;
+    }
     const { value, index } = props;
     const [addLoginForm, setAddLoginForm] = React.useState({
         username: '',
         password: ''
 
     });
-    
+
     const inputChangedHandler = (e) => {
         const state = addLoginForm;
         state[e.target.name] = e.target.value;
@@ -27,9 +56,19 @@ function LoginPanel(props) {
         setAddLoginForm({ ...state })
 
     }
-    function onLogin(e) {
+    async function onLogin(e) {
+        var loggin = await LoginHandler();
+        if(loggin===false){
+           console.log("Relogin");
+        }
+        else{
         props.modalCloseFunction();
         props.setUserLoggedIn(true);
+        sessionStorage.setItem("isUserLoggedInStorage", "true")
+        history.push("/");
+
+        }
+        
     }
     return (
         <div>{value === index &&
@@ -89,15 +128,16 @@ function RegisterPanel(props) {
 
 const Header = (props) => {
     const history = useHistory();
-    const [userLoggedIn, setUserLoggedIn] = React.useState(false);
-    function logoutHandler(){
+    const [userLoggedIn, setUserLoggedIn] = React.useState(sessionStorage.getItem("isUserLoggedInStorage")==="true");
+    function logoutHandler() {
+        sessionStorage.setItem("isUserLoggedInStorage", "false");
         setUserLoggedIn(false);
     }
-    function bookshowHandler(){
-        if(userLoggedIn===false){
+    function bookshowHandler() {
+        if (userLoggedIn === false) {
             changeModalToTrue()
         }
-        else{
+        else {
             history.push("/bookshow/tybhtyh");
         }
     }
@@ -129,12 +169,12 @@ const Header = (props) => {
                                 <Button variant="contained" color="default" name="Logout" onClick={logoutHandler}>Logout</Button>
                             </div>
                     }
-                    
+
 
                     <div className="singlebuttonContainer">
                         <Button variant="contained" color="primary" onClick={bookshowHandler}>Book Show</Button>
                     </div>
-                    
+
                 </div>
             </div>
             <Modal className="modalClass"

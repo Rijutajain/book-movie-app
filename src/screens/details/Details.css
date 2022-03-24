@@ -1,0 +1,18 @@
+.leftPanel{
+    width: 20%;
+    
+}
+.middlePanel{
+    text-align: left;
+    width : 60%;
+    
+
+}
+.rightPanel{
+    width: 20%;
+    
+}
+.threeSections{
+    display: flex;
+    flex-direction: row;
+}
