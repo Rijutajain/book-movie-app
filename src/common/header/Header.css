@@ -27,7 +27,6 @@
 @keyframes mymove {
     50% {transform: rotateY(180deg);}
   }
-
 .modalClass{
     width: 450px;
     height : 550px;

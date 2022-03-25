@@ -18,27 +18,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
 
-
 const Home = (props) => {
-    async function handleApplyButton(){
-        var url = "http://localhost:8085/api/v1/movies?status=released";
-        if(movieInput != ""){
-            url = url + "&title="+movieInput;
-        }
-        if(ReleaseStartDateInput != ""){
-            url = url + "&start_date="+ReleaseStartDateInput;
-        }
-        if(ReleaseEndDateInput != ""){
-            url=url+"&end_date="+ReleaseEndDateInput;
-        }
-        if(selectedGe.join(',') != ""){
-            url=url+ "&genre="+selectedGe.join(',');
-        }
-        if(selectedAr.join(',') != ""){
-            url=url+"&artists="+selectedAr.join(',');
-        }
+    async function getData(appendedUrl) {
         try {
-            const rawresponse = await fetch(url,
+            const rawresponse = await fetch('/api/v1/' + appendedUrl,
                 {
                     method: 'GET',
                     headers: {
@@ -47,57 +30,57 @@ const Home = (props) => {
                 })
             if (rawresponse.ok) {
                 const response = await rawresponse.json();
-                const fetchedFilteredMoviesArray = response.movies;
-                //console.log(fetchedGenreArray);
-                setReleasedMovies(fetchedFilteredMoviesArray);
+                return response;
             }
             else {
-                const error = new Error();
-                error.message = 'Something went wrong.';
+                const errorback = await rawresponse.json();
+                const error = new Error(errorback.message);
                 throw error;
             }
         } catch (e) {
             alert(e.message);
         }
     }
-    
-    const [ReleaseStartDateInput,setReleaseStartDateInput] = useState("");
-    function ReleaseStartDateHandler(e){
+    async function handleApplyButton() {
+        var url = "movies?status=released";
+        if (movieInput != "") {
+            url = url + "&title=" + movieInput;
+        }
+        if (ReleaseStartDateInput != "") {
+            url = url + "&start_date=" + ReleaseStartDateInput;
+        }
+        if (ReleaseEndDateInput != "") {
+            url = url + "&end_date=" + ReleaseEndDateInput;
+        }
+        if (selectedGe.join(',') != "") {
+            url = url + "&genre=" + selectedGe.join(',');
+        }
+        if (selectedAr.join(',') != "") {
+            url = url + "&artists=" + selectedAr.join(',');
+        }
+        const fetchedResponse = await getData(url);
+        const fetchedFilteredMoviesArray = fetchedResponse.movies;
+        setReleasedMovies(fetchedFilteredMoviesArray);
+    }
+
+    const [ReleaseStartDateInput, setReleaseStartDateInput] = useState("");
+    function ReleaseStartDateHandler(e) {
         setReleaseStartDateInput(e.target.value);
     }
-    const [ReleaseEndDateInput,setReleaseEndDateInput] = useState("");
-    function ReleaseEndDateHandler(e){
+    const [ReleaseEndDateInput, setReleaseEndDateInput] = useState("");
+    function ReleaseEndDateHandler(e) {
         setReleaseEndDateInput(e.target.value);
     }
-    const [movieInput,setMovieInput]= useState("");
-    function movieInputHandler(e){
-          setMovieInput(e.target.value);
+    const [movieInput, setMovieInput] = useState("");
+    function movieInputHandler(e) {
+        setMovieInput(e.target.value);
     }
     const [artistList, setArtist] = React.useState([]);
     useEffect(() => {
         async function getArtist() {
-            try {
-                const rawresponse = await fetch('http://localhost:8085/api/v1/artists',
-                    {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json;charset=UTF-8",
-                        }
-                    })
-                if (rawresponse.ok) {
-                    const response = await rawresponse.json();
-                    const fetchedArtistArray = response.artists;
-                    //console.log(fetchedGenreArray);
-                    setArtist(fetchedArtistArray);
-                }
-                else {
-                    const error = new Error();
-                    error.message = 'Something went wrong.';
-                    throw error;
-                }
-            } catch (e) {
-                alert(e.message);
-            }
+            const fetchedResponse = await getData("artists");
+            const fetchedArtistArray = fetchedResponse.artists;
+            setArtist(fetchedArtistArray);
         }
         getArtist();
     }, []);
@@ -109,28 +92,9 @@ const Home = (props) => {
     const [genreList, setGenre] = React.useState([]);
     useEffect(() => {
         async function getGenre() {
-            try {
-                const rawresponse = await fetch('http://localhost:8085/api/v1/genres',
-                    {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json;charset=UTF-8",
-                        }
-                    })
-                if (rawresponse.ok) {
-                    const response = await rawresponse.json();
-                    const fetchedGenreArray = response.genres;
-                    //console.log(fetchedGenreArray);
-                    setGenre(fetchedGenreArray);
-                }
-                else {
-                    const error = new Error();
-                    error.message = 'Something went wrong.';
-                    throw error;
-                }
-            } catch (e) {
-                alert(e.message);
-            }
+            const fetchedResponse = await getData("genres");
+            const fetchedGenreArray = fetchedResponse.genres;
+            setGenre(fetchedGenreArray);
         }
         getGenre();
     }, []);
@@ -142,28 +106,9 @@ const Home = (props) => {
     const [movies, setMovies] = useState([]);
     useEffect(() => {
         async function getMovies() {
-            try {
-                const rawresponse = await fetch('http://localhost:8085/api/v1/movies?status=published',
-                    {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json;charset=UTF-8",
-                        }
-                    })
-                if (rawresponse.ok) {
-                    const response = await rawresponse.json();
-                    const fetchedMovies = response.movies;
-                    // console.log(fetchedMovies);
-                    setMovies(fetchedMovies);
-                }
-                else {
-                    const error = new Error();
-                    error.message = 'Something went wrong.';
-                    throw error;
-                }
-            } catch (e) {
-                alert(e.message);
-            }
+            const fetchedResponse = await getData("movies?status=published");
+            const fetchedMovies = fetchedResponse.movies;
+            setMovies(fetchedMovies);
         }
         getMovies();
     }, []);
@@ -171,28 +116,9 @@ const Home = (props) => {
     const [releasedMovies, setReleasedMovies] = useState([]);
     useEffect(() => {
         async function getReleasedMovies() {
-            try {
-                const rawresponse = await fetch('http://localhost:8085/api/v1/movies?status=released',
-                    {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json;charset=UTF-8",
-                        }
-                    })
-                if (rawresponse.ok) {
-                    const response = await rawresponse.json();
-                    const fetchedReleasedMovies = response.movies;
-                    // console.log(fetchedMovies);
-                    setReleasedMovies(fetchedReleasedMovies);
-                }
-                else {
-                    const error = new Error();
-                    error.message = 'Something went wrong.';
-                    throw error;
-                }
-            } catch (e) {
-                alert(e.message);
-            }
+            const fetchedResponse = await getData("movies?status=released");
+            const fetchedReleasedMovies = fetchedResponse.movies;
+            setReleasedMovies(fetchedReleasedMovies);
         }
         getReleasedMovies();
     }, []);
@@ -233,12 +159,12 @@ const Home = (props) => {
                         <Typography sx={{ fontSize: 14 }} color="textSecondary">
                             FIND MOVIES BY:
                         </Typography>
-                        <FormControl style={{ marginTop : 10 , minWidth: 240, maxWidth: 240 }}>
+                        <FormControl style={{ marginTop: 10, minWidth: 240, maxWidth: 240 }}>
                             <InputLabel htmlFor="moviename">Movie Name</InputLabel>
-                            <Input id="moviename" value = {movieInput} onChange={movieInputHandler}/>
+                            <Input id="moviename" value={movieInput} onChange={movieInputHandler} />
                         </FormControl>
                         <br />
-                        <FormControl style={{ marginTop : 10 , minWidth: 240, maxWidth: 240 }}>
+                        <FormControl style={{ marginTop: 10, minWidth: 240, maxWidth: 240 }}>
                             <InputLabel htmlFor="select-multiple-checkbox">Genre</InputLabel>
                             <Select
                                 multiple
@@ -255,7 +181,7 @@ const Home = (props) => {
                                 ))}
                             </Select>
                         </FormControl>
-                        <FormControl style={{ marginTop : 10 , minWidth: 240, maxWidth: 240 }}>
+                        <FormControl style={{ marginTop: 10, minWidth: 240, maxWidth: 240 }}>
                             <InputLabel htmlFor="select-multiple-checkbox">Artists</InputLabel>
                             <Select
                                 multiple
@@ -268,24 +194,25 @@ const Home = (props) => {
                                     var artistname = artistEn.first_name + " " + artistEn.last_name;
                                     return (
                                         <MenuItem key={artistEn.id} value={artistname}>
-                                        <Checkbox checked={selectedAr.indexOf(artistname) > -1} />
-                                        <ListItemText primary={artistname} />
-                                    </MenuItem>
-                                )})}
-                        </Select>
-                    </FormControl>
-                    <FormControl style={{ marginTop : 10 , minWidth: 240, maxWidth: 240 }}>
-                        <TextField id="releasestartdate" type="date" label="Release Date Start" InputLabelProps={{ shrink: true }} value ={ReleaseStartDateInput} onChange={ReleaseStartDateHandler} />
-                    </FormControl>
-                    <FormControl style={{ marginTop : 10 , minWidth: 240, maxWidth: 240 }}>
-                        <TextField id="releaseenddate" type="date" label="Release Date End" InputLabelProps={{ shrink: true }} value ={ReleaseEndDateInput} onChange={ReleaseEndDateHandler} />
-                    </FormControl>
-                    <FormControl style={{ marginTop : 20 , minWidth: 240, maxWidth: 240 }}>
-                        <Button variant="contained" color="primary" onClick = {handleApplyButton}>APPLY</Button>
-                    </FormControl>
-                </CardContent>
-            </Card>
-        </div>
+                                            <Checkbox checked={selectedAr.indexOf(artistname) > -1} />
+                                            <ListItemText primary={artistname} />
+                                        </MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+                        <FormControl style={{ marginTop: 10, minWidth: 240, maxWidth: 240 }}>
+                            <TextField id="releasestartdate" type="date" label="Release Date Start" InputLabelProps={{ shrink: true }} value={ReleaseStartDateInput} onChange={ReleaseStartDateHandler} />
+                        </FormControl>
+                        <FormControl style={{ marginTop: 10, minWidth: 240, maxWidth: 240 }}>
+                            <TextField id="releaseenddate" type="date" label="Release Date End" InputLabelProps={{ shrink: true }} value={ReleaseEndDateInput} onChange={ReleaseEndDateHandler} />
+                        </FormControl>
+                        <FormControl style={{ marginTop: 20, minWidth: 240, maxWidth: 240 }}>
+                            <Button variant="contained" color="primary" onClick={handleApplyButton}>APPLY</Button>
+                        </FormControl>
+                    </CardContent>
+                </Card>
+            </div>
         </div >
     );
 }

@@ -6,33 +6,19 @@ import { useParams } from 'react-router-dom';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import YouTube from 'react-youtube';
 import Rating from '@material-ui/lab/Rating';
 
-
-
 const Details = (props) => {
-
-    function starFilledHandler() {
-        setStarClick(true);
-    }
-    const [starClick, setStarClick] = useState(false);
+    const history = useHistory();
     const opts = {
-        height: '390',
-        width: '640',
         playerVars: {
             // https://developers.google.com/youtube/player_parameters
             'autoplay': 1,
-            'origin': window.location.origin
-
         },
     };
-    const history = useHistory();
-    function BacktoHomeHandler() {
-        history.push("/");
-    }
     const [movieById, setMovieById] = useState({
         title: "",
         genres: [],
@@ -45,10 +31,15 @@ const Details = (props) => {
 
     });
     const movieId = useParams().id;
+
+    function BacktoHomeHandler() {
+        history.push("/");
+    }
+
     useEffect(() => {
         async function getMovie() {
             try {
-                var url = "http://localhost:8085/api/v1/movies/" + movieId;
+                var url = "/api/v1/movies/" + movieId;
                 const rawresponse = await fetch(url,
                     {
                         method: 'GET',
@@ -62,8 +53,8 @@ const Details = (props) => {
                     setMovieById(fetchedMovie);
                 }
                 else {
-                    const error = new Error();
-                    error.message = 'Something went wrong.';
+                    const errorback = await rawresponse.json();
+                    const error = new Error(errorback.message);
                     throw error;
                 }
             } catch (e) {
@@ -71,14 +62,13 @@ const Details = (props) => {
             }
         }
         getMovie();
-        console.log(opts);
     }, []);
     return (
         <div>
-            <Header baseUrl={props.baseUrl} bookshowid ={movieById.id} showbookshow= "true" />
+            <Header baseUrl={props.baseUrl} bookshowid={movieById.id} showbookshow="true" />
             <Typography noWrap style={{ marginLeft: 24, marginTop: 8, marginBottom: 0, height: 24, cursor: "pointer" }} className="typoText" variant="subtitle2" onClick={BacktoHomeHandler}>
                 &lt;BacktoHome
-                </Typography>
+            </Typography>
             <div className="threeSections">
                 <div className="leftPanel">
                     <img src={movieById.poster_url} alt={movieById.title} />
@@ -91,14 +81,13 @@ const Details = (props) => {
                         <p><b>Release Date: </b> {movieById.release_date}</p>
                         <p><b>Rating: </b> {movieById.rating}</p>
                         <p><b>Plot: </b> <a href={movieById.wiki_url} target="_blank">Wiki </a> {movieById.storyline}</p><br />
-
                     </Typography>
-                    <YouTube videoId={movieById.trailer_url} opts={opts} />;
+                    <YouTube videoId={movieById.trailer_url} opts={opts} />
                 </div>
                 <div className="rightPanel">
                     <b>Rate this movie</b><br />
-                    <Rating name="size-large" defaultValue={0} size="large"   icon={<StarBorderIcon fontSize="inherit" />} />
-                    <br/>
+                    <Rating name="size-large" defaultValue={0} size="large" icon={<StarBorderIcon fontSize="inherit" />} />
+                    <br />
                     <b>Artists :</b>
                     <GridList cols={2}>
                         {movieById.artists.map(artist => (
@@ -111,7 +100,6 @@ const Details = (props) => {
                             </GridListTile>
                         ))}
                     </GridList>
-
                 </div>
             </div>
         </div >
