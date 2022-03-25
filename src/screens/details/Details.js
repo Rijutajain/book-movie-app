@@ -75,11 +75,10 @@ const Details = (props) => {
     }, []);
     return (
         <div>
-            <Header baseUrl={props.baseUrl} />
+            <Header baseUrl={props.baseUrl} bookshowid ={movieById.id} showbookshow= "true" />
             <Typography noWrap style={{ marginLeft: 24, marginTop: 8, marginBottom: 0, height: 24, cursor: "pointer" }} className="typoText" variant="subtitle2" onClick={BacktoHomeHandler}>
-                BacktoHome
-
-            </Typography>
+                &lt;BacktoHome
+                </Typography>
             <div className="threeSections">
                 <div className="leftPanel">
                     <img src={movieById.poster_url} alt={movieById.title} />
@@ -98,10 +97,6 @@ const Details = (props) => {
                 </div>
                 <div className="rightPanel">
                     <b>Rate this movie</b><br />
-                    {/* <StarBorder
-                        fontSize="inherit"
-                        style={{ fontSize: "200px" }}
-                    /> */}
                     <Rating name="size-large" defaultValue={0} size="large"   icon={<StarBorderIcon fontSize="inherit" />} />
                     <br/>
                     <b>Artists :</b>

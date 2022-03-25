@@ -30,11 +30,12 @@ function LoginPanel(props) {
                 })
             if (rawresponse.ok) {
                 const response = await rawresponse.json();
+                window.sessionStorage.setItem("access-token" , rawresponse.headers.get('access-token'));
                 return true;
             }
             else {
-                const error = new Error();
-                error.message = 'Incorrect login';
+                const errorback = await rawresponse.json();
+                const error = new Error(errorback.message);
                 throw error;
             }
         } catch (e) {
@@ -85,6 +86,37 @@ function LoginPanel(props) {
 
 }
 function RegisterPanel(props) {
+    async function RegisterHandler() {
+        const param = {email_address : addRegisterForm.email,
+                      first_name : addRegisterForm.firstname,
+                      last_name : addRegisterForm.lastname,
+                      mobile_number : addRegisterForm.contact,
+                      password : addRegisterForm.password}
+        try {
+            const rawresponse = await fetch('http://localhost:8085/api/v1/signup',
+                {
+                    body : JSON.stringify(param),
+                    method: 'POST',
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type":"application/json;charset=UTF-8"
+                        }
+                })
+            if (rawresponse.ok) {
+                const response = await rawresponse.json();
+                setregVisibility(true);
+                return true;
+            }
+            else {
+                const errorback = await rawresponse.json();
+                const error = new Error(errorback.message);
+                throw error;
+            }
+        } catch (e) {
+            alert(e.message);
+        }
+        return false;
+    }
     const [addRegisterForm, setAddRegisterForm] = React.useState({
         firstname: '',
         lastname: '',
@@ -104,9 +136,11 @@ function RegisterPanel(props) {
     const [regVisibility, setregVisibility] = React.useState("hideVisibilityCss");
     function onRegister(e) {
         e.preventDefault();
-        const newVisibility = (regVisibility === "showVisibilityCss") ? "hideVisibilityCss" : "showVisibilityCss";
-        setregVisibility(newVisibility);
+        var registered=RegisterHandler();
+        // const newVisibility = (regVisibility === "showVisibilityCss") ? "hideVisibilityCss" : "showVisibilityCss";
+        // setregVisibility(newVisibility);
     }
+
     return (
         <div>{value === index &&
             (<ValidatorForm className="registerform" onSubmit={onRegister} >
@@ -132,13 +166,14 @@ const Header = (props) => {
     function logoutHandler() {
         sessionStorage.setItem("isUserLoggedInStorage", "false");
         setUserLoggedIn(false);
+        sessionStorage.removeItem("access-token");
     }
     function bookshowHandler() {
         if (userLoggedIn === false) {
             changeModalToTrue()
         }
         else {
-            history.push("/bookshow/tybhtyh");
+            history.push("/bookshow/"+props.bookshowid);
         }
     }
     function changeModalToTrue() {
@@ -172,9 +207,15 @@ const Header = (props) => {
 
 
                     <div className="singlebuttonContainer">
-                        <Button variant="contained" color="primary" onClick={bookshowHandler}>Book Show</Button>
+                        {
+                        props.showbookshow === "true"
+                        ?
+                        <Button classname ="bookshowVisibility" variant="contained" color="primary" onClick={bookshowHandler}>Book Show</Button>
+                        :
+                        console.log("No book show handler")
+                        }
                     </div>
-
+                   
                 </div>
             </div>
             <Modal className="modalClass"
