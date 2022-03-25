@@ -4,7 +4,7 @@ import "./Home.css"
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -19,6 +19,43 @@ import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
 
 const Home = (props) => {
+    const [ReleaseStartDateInput, setReleaseStartDateInput] = useState("");
+    const [ReleaseEndDateInput, setReleaseEndDateInput] = useState("");
+    const [movieInput, setMovieInput] = useState("");
+    const [artistList, setArtist] = React.useState([]);
+    const [selectedAr, setAr] = React.useState([]);
+    const [genreList, setGenre] = React.useState([]);
+    const [selectedGe, setGe] = React.useState([]);
+    const [movies, setMovies] = useState([]);
+    const [releasedMovies, setReleasedMovies] = useState([]);
+    
+    useEffect(() => {
+        async function getArtist() {
+            const fetchedResponse = await getData("artists");
+            const fetchedArtistArray = fetchedResponse.artists;
+            setArtist(fetchedArtistArray);
+        }
+        async function getGenre() {
+            const fetchedResponse = await getData("genres");
+            const fetchedGenreArray = fetchedResponse.genres;
+            setGenre(fetchedGenreArray);
+        }
+        async function getMovies() {
+            const fetchedResponse = await getData("movies?status=published");
+            const fetchedMovies = fetchedResponse.movies;
+            setMovies(fetchedMovies);
+        }
+        async function getReleasedMovies() {
+            const fetchedResponse = await getData("movies?status=released");
+            const fetchedReleasedMovies = fetchedResponse.movies;
+            setReleasedMovies(fetchedReleasedMovies);
+        }
+        getArtist();
+        getGenre();
+        getMovies();
+        getReleasedMovies();
+    }, []);
+
     async function getData(appendedUrl) {
         try {
             const rawresponse = await fetch('/api/v1/' + appendedUrl,
@@ -41,6 +78,7 @@ const Home = (props) => {
             alert(e.message);
         }
     }
+
     async function handleApplyButton() {
         var url = "movies?status=released";
         if (movieInput != "") {
@@ -63,65 +101,25 @@ const Home = (props) => {
         setReleasedMovies(fetchedFilteredMoviesArray);
     }
 
-    const [ReleaseStartDateInput, setReleaseStartDateInput] = useState("");
     function ReleaseStartDateHandler(e) {
         setReleaseStartDateInput(e.target.value);
     }
-    const [ReleaseEndDateInput, setReleaseEndDateInput] = useState("");
+
     function ReleaseEndDateHandler(e) {
         setReleaseEndDateInput(e.target.value);
     }
-    const [movieInput, setMovieInput] = useState("");
+
     function movieInputHandler(e) {
         setMovieInput(e.target.value);
     }
-    const [artistList, setArtist] = React.useState([]);
-    useEffect(() => {
-        async function getArtist() {
-            const fetchedResponse = await getData("artists");
-            const fetchedArtistArray = fetchedResponse.artists;
-            setArtist(fetchedArtistArray);
-        }
-        getArtist();
-    }, []);
 
-    const [selectedAr, setAr] = React.useState([]);
     function handleArtist(e) {
         setAr(e.target.value);
     }
-    const [genreList, setGenre] = React.useState([]);
-    useEffect(() => {
-        async function getGenre() {
-            const fetchedResponse = await getData("genres");
-            const fetchedGenreArray = fetchedResponse.genres;
-            setGenre(fetchedGenreArray);
-        }
-        getGenre();
-    }, []);
 
-    const [selectedGe, setGe] = React.useState([]);
     function handleGenre(e) {
         setGe(e.target.value);
     }
-    const [movies, setMovies] = useState([]);
-    useEffect(() => {
-        async function getMovies() {
-            const fetchedResponse = await getData("movies?status=published");
-            const fetchedMovies = fetchedResponse.movies;
-            setMovies(fetchedMovies);
-        }
-        getMovies();
-    }, []);
-
-    const [releasedMovies, setReleasedMovies] = useState([]);
-    useEffect(() => {
-        async function getReleasedMovies() {
-            const fetchedResponse = await getData("movies?status=released");
-            const fetchedReleasedMovies = fetchedResponse.movies;
-            setReleasedMovies(fetchedReleasedMovies);
-        }
-        getReleasedMovies();
-    }, []);
 
     return (
         <div>
@@ -131,22 +129,18 @@ const Home = (props) => {
                 <GridList style={{ flexWrap: "nowrap" }} cols={6}>
                     {movies.map(movie => (
                         <GridListTile style={{ height: 250 }} key={movie.id}>
-
                             <img src={movie.poster_url} alt={movie.title} />
-
                             <GridListTileBar title={movie.title} />
                         </GridListTile>
                     ))}
                 </GridList>
             </div>
-
             <div className="releasedMoviesOuterDiv">
                 <GridList cols={4}>
                     {releasedMovies.map(releasedMovie => (
                         <GridListTile style={{ height: 350 }} key={releasedMovie.id}>
                             <Link to={"/movie/" + releasedMovie.id}>
                                 <img src={releasedMovie.poster_url} alt={releasedMovie.title} style={{ cursor: "pointer" }} />
-
                                 <GridListTileBar title={releasedMovie.title} subtitle={<span>Release Date: {releasedMovie.release_date}</span>} />
                             </Link>
                         </GridListTile>
@@ -171,8 +165,7 @@ const Home = (props) => {
                                 value={selectedGe}
                                 onChange={handleGenre}
                                 input={<Input id="select-multiple-checkbox" placeholder="Genre" />}
-                                renderValue={selected => selected.join(', ')}
-                            >
+                                renderValue={selected => selected.join(', ')}>
                                 {genreList.map(genreEn => (
                                     <MenuItem key={genreEn.id} value={genreEn.genre}>
                                         <Checkbox checked={selectedGe.indexOf(genreEn.genre) > -1} />
@@ -188,8 +181,7 @@ const Home = (props) => {
                                 value={selectedAr}
                                 onChange={handleArtist}
                                 input={<Input id="select-multiple-checkbox" placeholder="Artist" />}
-                                renderValue={selected => selected.join(', ')}
-                            >
+                                renderValue={selected => selected.join(', ')}>
                                 {artistList.map(artistEn => {
                                     var artistname = artistEn.first_name + " " + artistEn.last_name;
                                     return (
