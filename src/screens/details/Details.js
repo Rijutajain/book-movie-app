@@ -49,7 +49,6 @@ const Details = (props) => {
                     })
                 if (rawresponse.ok) {
                     const fetchedMovie = await rawresponse.json();
-                    console.log(fetchedMovie);
                     setMovieById(fetchedMovie);
                 }
                 else {
@@ -74,13 +73,23 @@ const Details = (props) => {
                     <img src={movieById.poster_url} alt={movieById.title} />
                 </div>
                 <div className="middlePanel">
-                    <Typography headline="variant">
-                        <h2>{movieById.title}</h2>
-                        <p><b>Genres: </b> {movieById.genres.join(',')}</p>
-                        <p><b>Duration: </b>{movieById.duration}</p>
-                        <p><b>Release Date: </b> {movieById.release_date}</p>
-                        <p><b>Rating: </b> {movieById.rating}</p>
-                        <p><b>Plot: </b> <a href={movieById.wiki_url} target="_blank">Wiki </a> {movieById.storyline}</p><br />
+                    <Typography variant = "headline" component = "h2">
+                        {movieById.title}
+                    </Typography>
+                    <Typography>
+                        <b>Genres: </b> {movieById.genres.join(',')}
+                    </Typography>
+                    <Typography>
+                        <b>Duration: </b>{movieById.duration}
+                    </Typography>
+                    <Typography>
+                        <b>Release Date: </b> {new Date(movieById.release_date).toDateString()}
+                    </Typography>
+                    <Typography>
+                        <b>Rating: </b> {movieById.rating}
+                    </Typography>
+                    <Typography>
+                        <b>Plot: </b> <a href={movieById.wiki_url} target="_blank">(Wiki Link)</a> {movieById.storyline}<br />
                     </Typography>
                     <YouTube videoId={movieById.trailer_url} opts={opts} />
                 </div>
@@ -88,7 +97,7 @@ const Details = (props) => {
                     <b>Rate this movie</b><br />
                     <Rating name="size-large" defaultValue={0} size="large" icon={<StarBorderIcon fontSize="inherit" />} />
                     <br />
-                    <b>Artists :</b>
+                    <div className="Artist"><b>Artists :</b></div>
                     <GridList cols={2}>
                         {movieById.artists.map(artist => (
                             <GridListTile style={{ height: 250 }} key={artist.id}>

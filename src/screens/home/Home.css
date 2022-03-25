@@ -11,7 +11,7 @@
     flex-wrap: wrap;
 }
 .releasedMoviesOuterDiv{
-    box-sizing: border-box;
+  box-sizing: border-box;
   width : 76%;
   float : left;
   padding : 16px;

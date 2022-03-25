@@ -184,9 +184,9 @@ const Header = (props) => {
                         {
                             props.showbookshow === "true"
                                 ?
-                                <Button classname="bookshowVisibility" variant="contained" color="primary" onClick={bookshowHandler}>Book Show</Button>
+                                <Button className="bookshowVisibility" variant="contained" color="primary" onClick={bookshowHandler}>Book Show</Button>
                                 :
-                                console.log("No book show handler")
+                                null
                         }
                     </div>
                 </div>

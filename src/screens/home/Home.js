@@ -28,7 +28,7 @@ const Home = (props) => {
     const [selectedGe, setGe] = React.useState([]);
     const [movies, setMovies] = useState([]);
     const [releasedMovies, setReleasedMovies] = useState([]);
-    
+
     useEffect(() => {
         async function getArtist() {
             const fetchedResponse = await getData("artists");
@@ -81,19 +81,19 @@ const Home = (props) => {
 
     async function handleApplyButton() {
         var url = "movies?status=released";
-        if (movieInput != "") {
+        if (movieInput !== "") {
             url = url + "&title=" + movieInput;
         }
-        if (ReleaseStartDateInput != "") {
+        if (ReleaseStartDateInput !== "") {
             url = url + "&start_date=" + ReleaseStartDateInput;
         }
-        if (ReleaseEndDateInput != "") {
+        if (ReleaseEndDateInput !== "") {
             url = url + "&end_date=" + ReleaseEndDateInput;
         }
-        if (selectedGe.join(',') != "") {
+        if (selectedGe.join(',') !== "") {
             url = url + "&genre=" + selectedGe.join(',');
         }
-        if (selectedAr.join(',') != "") {
+        if (selectedAr.join(',') !== "") {
             url = url + "&artists=" + selectedAr.join(',');
         }
         const fetchedResponse = await getData(url);
@@ -159,12 +159,12 @@ const Home = (props) => {
                         </FormControl>
                         <br />
                         <FormControl style={{ marginTop: 10, minWidth: 240, maxWidth: 240 }}>
-                            <InputLabel htmlFor="select-multiple-checkbox">Genre</InputLabel>
+                            <InputLabel htmlFor="select-multiple-checkbox-genre">Genre</InputLabel>
                             <Select
                                 multiple
                                 value={selectedGe}
                                 onChange={handleGenre}
-                                input={<Input id="select-multiple-checkbox" placeholder="Genre" />}
+                                input={<Input id="select-multiple-checkbox-genre" placeholder="Genre" />}
                                 renderValue={selected => selected.join(', ')}>
                                 {genreList.map(genreEn => (
                                     <MenuItem key={genreEn.id} value={genreEn.genre}>
@@ -175,12 +175,12 @@ const Home = (props) => {
                             </Select>
                         </FormControl>
                         <FormControl style={{ marginTop: 10, minWidth: 240, maxWidth: 240 }}>
-                            <InputLabel htmlFor="select-multiple-checkbox">Artists</InputLabel>
+                            <InputLabel htmlFor="select-multiple-checkbox-artist">Artists</InputLabel>
                             <Select
                                 multiple
                                 value={selectedAr}
                                 onChange={handleArtist}
-                                input={<Input id="select-multiple-checkbox" placeholder="Artist" />}
+                                input={<Input id="select-multiple-checkbox-artist" placeholder="Artist" />}
                                 renderValue={selected => selected.join(', ')}>
                                 {artistList.map(artistEn => {
                                     var artistname = artistEn.first_name + " " + artistEn.last_name;
