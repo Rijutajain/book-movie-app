@@ -11,15 +11,17 @@
     flex-wrap: wrap;
 }
 .releasedMoviesOuterDiv{
-  box-sizing: border-box;
-  width : 76%;
-  float : left;
-  padding : 16px;
-}
-.filter{
-    text-align: center;
     box-sizing: border-box;
-    width : 24%;
-    float : right;
-    padding : 16px;
-}
+    flex: 76;
+    margin : 16px;
+  }
+  .filter{
+      text-align: center;
+      box-sizing: border-box;
+      flex: 24;
+      margin : 16px;
+  }
+  .releasedMovieAndFilter{
+      display : flex;
+      flex-direction: row;
+  } 

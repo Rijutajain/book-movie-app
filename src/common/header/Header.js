@@ -3,7 +3,7 @@ import "./Header.css"
 import logo from "../../assets/logo.svg";
 import Button from "@material-ui/core/Button";
 import Modal from 'react-modal';
-import { Tab, Tabs} from "@material-ui/core";
+import { AppBar, Tab, Tabs} from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator"
 import {useHistory } from 'react-router-dom';
 
@@ -194,7 +194,7 @@ const Header = (props) => {
             <Modal className="modalClass"
                 isOpen={openModal}
                 onRequestClose={changeModalToFalse}>
-                <Tabs value={value} onChange={handleTabs}>
+                <Tabs style={{textAlign : "center"}} value={value} onChange={handleTabs} centered>
                     <Tab label="Login" />
                     <Tab label="Register" />
                 </Tabs>
