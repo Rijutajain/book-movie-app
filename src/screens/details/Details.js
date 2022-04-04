@@ -89,8 +89,11 @@ const Details = (props) => {
                     <Typography>
                         <b>Rating: </b> {movieById.rating}
                     </Typography>
-                    <Typography>
+                    <Typography style = {{marginTop : 16}}>
                         <b>Plot: </b> <a href={movieById.wiki_url} target="_blank">(Wiki Link)</a> {movieById.storyline}<br />
+                    </Typography>
+                    <Typography  style = {{marginTop : 16}}>
+                        <b>Trailer: </b>
                     </Typography>
                     <YouTube  videoId={movieById.trailer_url.substring(movieById.trailer_url.indexOf('=')+1)} opts={opts}/>
                 </div>
