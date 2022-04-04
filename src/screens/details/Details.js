@@ -15,7 +15,6 @@ const Details = (props) => {
     const history = useHistory();
     const opts = {
         playerVars: {
-            // https://developers.google.com/youtube/player_parameters
             'autoplay': 1,
         },
     };
@@ -49,6 +48,8 @@ const Details = (props) => {
                     })
                 if (rawresponse.ok) {
                     const fetchedMovie = await rawresponse.json();
+
+            console.log(fetchedMovie.trailer_url);
                     setMovieById(fetchedMovie);
                 }
                 else {
@@ -91,7 +92,7 @@ const Details = (props) => {
                     <Typography>
                         <b>Plot: </b> <a href={movieById.wiki_url} target="_blank">(Wiki Link)</a> {movieById.storyline}<br />
                     </Typography>
-                    <YouTube videoId={movieById.trailer_url} opts={opts} />
+                    <YouTube  videoId={movieById.trailer_url.substring(movieById.trailer_url.indexOf('=')+1)} opts={opts}/>
                 </div>
                 <div className="rightPanel">
                     <b>Rate this movie</b><br />
